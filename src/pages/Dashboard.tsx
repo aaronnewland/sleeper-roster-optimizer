@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useState } from "react";
 
 import { useUserQueries } from "@/hooks/useUserQueries";
 import { useLeagueQueries } from "@/hooks/useLeagueQueries";
@@ -6,9 +7,21 @@ import { useRostersQueries } from "@/hooks/useRostersQueries";
 
 import UserCard from "@/components/UserCard";
 import LeagueUserCard from "@/components/LeagueRosterCard";
+import FileDropper from "@/components/FileDropper";
+
+import type { PlayerSpreadsheetVals } from "@/types/playerTypes";
 
 export default function Dashboard() {
   const { username } = useParams<{ username: string }>();
+  const [playerMap, setPlayerMap] = useState<
+    Map<string, PlayerSpreadsheetVals>
+  >(new Map());
+
+  function handleSetPlayerMap(
+    newPlayerMap: Map<string, PlayerSpreadsheetVals>,
+  ) {
+    setPlayerMap(newPlayerMap);
+  }
 
   // fetch user info from sleeper in this order:
   //    fetch user info off of provided username
@@ -30,6 +43,7 @@ export default function Dashboard() {
 
   return (
     <div>
+      <FileDropper setPlayerMap={handleSetPlayerMap} />
       {isUserLoading ? (
         <h1>Loading user data...</h1>
       ) : (
@@ -44,6 +58,7 @@ export default function Dashboard() {
             <LeagueUserCard
               userLeagues={userLeagues}
               league={league}
+              playerRankMap={playerMap}
               key={league.league_id}
             />
           ))}

@@ -1,7 +1,10 @@
+import type { PlayerRankInfo } from "@/types/playerTypes";
+import Player from "./Player";
+
 type RosterComponentProps = {
   rosterName: string;
   roster: Array<string>;
-  playerNamesMap: Map<string, string>;
+  playerNamesMap: Map<string, PlayerRankInfo>;
 };
 
 export default function RosterComponent({
@@ -13,9 +16,13 @@ export default function RosterComponent({
     <>
       <p className="text-2xl">{rosterName}</p>
       {roster && roster[0] !== "0" ? (
-        roster.map((player) => {
-          return <p key={player}>{playerNamesMap?.get(player)}</p>;
-        })
+        roster.map((player) => (
+          <Player
+            player={player}
+            playerNamesMap={playerNamesMap}
+            key={player}
+          />
+        ))
       ) : (
         <></>
       )}

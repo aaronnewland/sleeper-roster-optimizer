@@ -35,12 +35,6 @@ export type Roster = {
   settings: Map<string, string>;
 };
 
-export type PlayerSpreadsheetVals = {
-  position: string;
-  rank: number;
-  tier: number;
-};
-
 //     self.roster_id: int = 0
 //     self.owner_id: str = ""
 //     self.league_id: str = ""

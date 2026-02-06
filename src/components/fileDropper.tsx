@@ -1,21 +1,25 @@
 import ExcelJS from "exceljs";
-import type { useState, ChangeEvent } from "react";
+import { type ChangeEvent } from "react";
 
-import { type PlayerSpreadsheetVals } from "@/types/sleeperAPITypes";
+import { type PlayerSpreadsheetVals } from "@/types/playerTypes";
 
-const newPlayerMap = new Map<string, PlayerSpreadsheetVals>();
+type FileDropperProps = {
+  setPlayerMap: (playerMap: Map<string, PlayerSpreadsheetVals>) => void;
+};
 
-export default function FileDropper() {
-  const [playerMap, setPlayerMap] = useState<
-    Map<string, PlayerSpreadsheetVals>
-  >(new Map());
+export default function FileDropper({ setPlayerMap }: FileDropperProps) {
+  // const [playerMap, setPlayerMap] = useState<
+  //   Map<string, PlayerSpreadsheetVals>
+  // >(new Map());
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    const newPlayerMap = new Map<string, PlayerSpreadsheetVals>();
+
     if (file) {
       // console.log(file);
       const workbook = new ExcelJS.Workbook();
       const reader = new FileReader();
-      // TODO: This will be user fed information
+      // TODO: This will be user fed information, so will the name of the sheet
       const PositionColumns = {
         QB_RANK: 1,
         QUARTERBACK: 2,
@@ -40,7 +44,7 @@ export default function FileDropper() {
         if (buffer && buffer instanceof ArrayBuffer) {
           workbook.xlsx.load(buffer as ArrayBuffer).then((wb) => {
             // console.log(wb);
-            const sheet = wb.getWorksheet(1);
+            const sheet = wb.getWorksheet("Rankings and Tiers");
             sheet?.eachRow((row) => {
               const qbRank = row.getCell(PositionColumns.QB_RANK).value;
               const qb = row.getCell(PositionColumns.QUARTERBACK).value;
