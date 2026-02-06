@@ -18,7 +18,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    navigate(`/user/${data.username}`);
+    navigate(`/user/${data.username}/dashboard`);
   };
 
   return (

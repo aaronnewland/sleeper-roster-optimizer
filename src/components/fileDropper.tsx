@@ -15,6 +15,7 @@ export default function FileDropper() {
       // console.log(file);
       const workbook = new ExcelJS.Workbook();
       const reader = new FileReader();
+      // TODO: This will be user fed information
       const PositionColumns = {
         QB_RANK: 1,
         QUARTERBACK: 2,
