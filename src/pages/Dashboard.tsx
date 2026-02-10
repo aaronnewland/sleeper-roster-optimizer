@@ -54,14 +54,24 @@ export default function Dashboard() {
       ) : (
         <div>
           <h1>User Leagues</h1>
-          {allLeagueData!.map((league) => (
-            <LeagueUserCard
-              userLeagues={userLeagues}
-              league={league}
-              playerRankMap={playerMap}
-              key={league.league_id}
-            />
-          ))}
+          {allLeagueData!.map((league) => {
+            const leagueRoster = userLeagues.find(
+              (userLeague) => userLeague.league_id === league.league_id,
+            );
+            if (leagueRoster?.players) {
+              return (
+                <LeagueUserCard
+                  roster={leagueRoster}
+                  league={league}
+                  playerRankMap={playerMap}
+                  key={league.league_id}
+                />
+              );
+              // only shows leagues with rosters
+            } else {
+              return <div key={league.league_id}></div>;
+            }
+          })}
         </div>
       )}
     </div>

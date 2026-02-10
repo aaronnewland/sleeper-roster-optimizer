@@ -8,29 +8,30 @@ import { playerDB } from "@/db/playerDB";
 import RosterComponent from "@/components/RosterComponent";
 
 type LeagueUserCardProps = {
-  userLeagues: Array<Roster>;
+  roster: Roster;
   league: League;
   playerRankMap: Map<string, PlayerSpreadsheetVals>;
 };
 
 export default function LeagueUserCard({
-  userLeagues,
+  roster,
   league,
   playerRankMap,
 }: LeagueUserCardProps) {
-  // create a map for all of the user's player ID's to the player's full name
-  const allPlayerIDs = userLeagues.flatMap((roster) => roster.players || []);
+  const playerIDs = roster.players;
 
+  // create a map for all of the user's player ID's to the player's full name
   const playerNamesMap: Map<string, PlayerRankInfo> =
     useLiveQuery(async () => {
-      const players = await playerDB.players.bulkGet(allPlayerIDs);
+      const players = await playerDB.players.bulkGet(playerIDs);
 
       const map: Map<string, PlayerRankInfo> = new Map();
 
       players.forEach((player, index) => {
         if (player) {
-          map.set(allPlayerIDs[index], {
+          map.set(playerIDs[index], {
             playerName: player.first_name + " " + player.last_name,
+            // add rank info to player if applicable
             spreadsheetVals: playerRankMap.get(
               player.first_name + " " + player.last_name,
             ),
@@ -41,20 +42,12 @@ export default function LeagueUserCard({
 
       // re-renders if user's player's change OR if new rankings sheet
       // is uploaded
-    }, [allPlayerIDs.length, playerRankMap]) ||
-    new Map<string, PlayerRankInfo>();
+    }, [playerIDs.length, playerRankMap]) || new Map<string, PlayerRankInfo>();
 
-  const playerRoster = userLeagues.find(
-    (userLeague) => userLeague.league_id === league.league_id,
-  )?.players;
-  const starters =
-    userLeagues.find((userLeague) => userLeague.league_id === league.league_id)
-      ?.starters || [];
+  const starters = roster.starters;
   const bench =
-    playerRoster?.filter((player) => !starters?.includes(player)) || [];
-  const reserve =
-    userLeagues.find((userLeague) => userLeague.league_id === league.league_id)
-      ?.reserve || [];
+    playerIDs?.filter((player) => !starters?.includes(player)) || [];
+  const reserve = roster.reserve;
 
   return (
     <div key={league.league_id} className="m-2">
